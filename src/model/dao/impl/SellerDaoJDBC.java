@@ -4,10 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import database.DB;
 import database.DBException;
@@ -148,6 +145,7 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Este método faz a busca na base de dados de todos os Seller
 	 * para um determinado Department e retorna uma lista de Seller
@@ -190,5 +188,7 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 	}
 
+=======
+>>>>>>> parent of 573b5aa (findByDepartment implementation)
 	
 }
