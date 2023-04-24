@@ -73,7 +73,16 @@ public class SellerDaoJDBC implements SellerDao {
 			DB.closeResultSet(rs);
 		}
 	}
-
+	
+	/**
+	 * Este método instancia o Seller e retorna um objeto com os 
+	 * valores obtidos da base de dados através de suas respectivas
+	 * colunas informadas
+	 * @param rs
+	 * @param dep
+	 * @return
+	 * @throws SQLException
+	 */
 	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
 		Seller obj = new Seller();
 		obj.setId(rs.getInt("Id"));
@@ -85,6 +94,14 @@ public class SellerDaoJDBC implements SellerDao {
 		return obj;
 	}
 
+	/**
+	 * Este método instancia o Department e retorna um objeto com os 
+	 * valores obtidos da base de dados através de suas respectivas
+	 * colunas informadas
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
 	private Department instantiateDepartment(ResultSet rs) throws SQLException {
 		Department dep = new Department();
 		dep.setId(rs.getInt("DepartmentId"));
@@ -92,12 +109,50 @@ public class SellerDaoJDBC implements SellerDao {
 		return dep;
 	}
 
+	/**
+	 * Este faz a busca de todos os Sellers cadastrados na base e
+	 * retorna uma lista com esses Sellers.
+	 */
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = connection.prepareStatement(
+					"SELECT seller.*,department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "ORDER BY Name");
+			rs = st.executeQuery();
+			
+			List<Seller> list = new ArrayList<>();
+			Map<Integer, Department> map = new HashMap<>();
+			
+			while(rs.next()) {
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				if (dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				Seller obj = instantiateSeller(rs, dep);
+				list.add(obj);
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closeStatment(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
+	/**
+	 * Este método faz a busca na base de dados de todos os Seller
+	 * para um determinado Department e retorna uma lista de Seller
+	 * com aquele Department específico. 
+	 */
 	@Override
 	public List<Seller> findByDepartment(Department department) {
 		PreparedStatement st = null;
