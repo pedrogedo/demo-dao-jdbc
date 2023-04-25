@@ -25,6 +25,11 @@ public class SellerDaoJDBC implements SellerDao {
 		this.connection = connection;
 	}
 	
+	/**
+	 * Este método é responsável por fazer a inserção de um Seller
+	 * na base de dados. O objeto Seller deve ser passado via parâmetro
+	 * do método.
+	 */
 	@Override
 	public void insert(Seller obj) {
 		PreparedStatement st = null;
@@ -63,9 +68,36 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 	}
 
+	/**
+	 * Este método é responsável por fazer a atualização de um 
+	 * determinado dado de um Seller. Para isso, deve ser informado
+	 * via parâmetro o dado a ser alterado.
+	 */
 	@Override
 	public void update(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = connection.prepareStatement(
+					"UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
+					+ "WHERE Id = ?");
+			
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new Date(obj.getBirthDate().getTime()));
+			st.setDouble(4, obj.getBaseSalary());
+			st.setInt(5, obj.getDepartment().getId());
+			st.setInt(6, obj.getId());
+			
+			st.executeUpdate();
+			
+		}
+		catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		}
+		finally {
+			DB.closeStatment(st);
+		}
 		
 	}
 
